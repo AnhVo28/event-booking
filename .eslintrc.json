@@ -1,0 +1,17 @@
+{
+    
+    "extends": [
+        "react-app",
+        "plugin:flowtype/recommended"
+    ],
+    
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+        "indent": ["error",4],
+        "linebreak-style": 0,
+        "quotes": [ "error", "double"],
+        "semi": ["error", "always" ]
+    }
+}
