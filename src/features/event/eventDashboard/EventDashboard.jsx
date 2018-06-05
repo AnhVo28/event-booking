@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Grid, Button } from "semantic-ui-react";
+import cuid from "cuid";
 import EventList from "../eventList/EventList";
 import EventForm from "../eventForm/EventForm";
-
 
 const events = [
     {
@@ -11,7 +11,7 @@ const events = [
         date: "2018-03-27T11:00:00+00:00",
         category: "culture",
         description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sollicitudin ligula eu leo tincidunt, quis scelerisque magna dapibus. Sed eget ipsum vel arcu vehicula ullamcorper.",
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sollicitudin ligula eu leo tincidunt, quis scelerisque magna dapibus. Sed eget ipsum vel arcu vehicula ullamcorper.",
         city: "London, UK",
         venue: "Tower of London, St Katharine's & Wapping, London",
         hostedBy: "Bob",
@@ -35,7 +35,7 @@ const events = [
         date: "2018-03-28T14:00:00+00:00",
         category: "drinks",
         description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sollicitudin ligula eu leo tincidunt, quis scelerisque magna dapibus. Sed eget ipsum vel arcu vehicula ullamcorper.",
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sollicitudin ligula eu leo tincidunt, quis scelerisque magna dapibus. Sed eget ipsum vel arcu vehicula ullamcorper.",
         city: "London, UK",
         venue: "Punch & Judy, Henrietta Street, London, UK",
         hostedBy: "Tom",
@@ -56,15 +56,50 @@ const events = [
 ];
 
 class EventDashboard extends Component {
+    state = {
+        events: events,
+        isOpen: false
+    };
+
+    handleFormOpen = () => {
+        this.setState({
+            isOpen: !this.state.isOpen
+        });
+    };
+
+    handleCancel = () => {
+        this.setState({
+            isOpen: false
+        });
+    };
+
+    handleCreateEvent = newEvent => {
+        newEvent.id = cuid();
+        newEvent.hostPhotoURL = "/assets/user.png";
+        const updatedEvents = [...this.state.events, newEvent];
+        this.setState({
+            events: updatedEvents,
+            isOpen: false
+        });
+    };
     render() {
         return (
             <Grid>
                 <Grid.Column width={10}>
-                    <EventList events={events}/>
+                    <EventList events={this.state.events} />
                 </Grid.Column>
                 <Grid.Column width={6}>
-                    <Button positive content="Create event"/>
-                    <EventForm/>
+                    <Button
+                        onClick={this.handleFormOpen}
+                        positive
+                        content="Create event"
+                    />
+                    {this.state.isOpen && (
+                        <EventForm
+                            handleCreateEvent={this.handleCreateEvent}
+                            handleCancel={this.handleCancel}
+                        />
+                    )}
                 </Grid.Column>
             </Grid>
         );
