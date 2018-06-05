@@ -1,18 +1,41 @@
 import React, { Component } from 'react';
 import { Menu, Button, Container } from 'semantic-ui-react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, withRouter } from 'react-router-dom';
+import SignOutMenu from '../menus/SignOutMenu';
+import SignInMenu from '../menus/SignInMenu';
 
-export class NavBar extends Component {
+class NavBar extends Component {
+    state = {
+        authenicated: false
+    };
+
+    handleSignIn = () => {
+        this.setState({
+            authenicated: true
+        });
+    };
+    handleSignOut = () => {
+        this.setState({
+            authenicated: false
+        });
+        this.props.history.push('/');
+    };
+
     render() {
+        const { authenicated } = this.state;
         return (
-            <Menu  inverted fixed="top">
+            <Menu inverted fixed="top">
                 <Container>
                     <Menu.Item as={Link} to="/" header>
-                        <img src="assets/logo.png" alt="logo" />
+                        <img src="/assets/logo.png" alt="logo" />
                         Re-vents
                     </Menu.Item>
                     <Menu.Item as={NavLink} to="/events" name="Events" />
-                    <Menu.Item as={NavLink} to="/people" name="People" />
+                    { authenicated && 
+                    <Menu.Item as={NavLink} to="/people" name="People" />}
+
+                    {authenicated && 
+                    
                     <Menu.Item as={Link} to="/createEvent">
                         <Button
                             floated="right"
@@ -21,19 +44,16 @@ export class NavBar extends Component {
                             content="Create Event"
                         />
                     </Menu.Item>
-                    <Menu.Item position="right">
-                        <Button basic inverted content="Login" />
-                        <Button
-                            basic
-                            inverted
-                            content="Sign Out"
-                            style={{ marginLeft: '0.5em' }}
-                        />
-                    </Menu.Item>
+                    }
+                    {authenicated ? (
+                        <SignInMenu signOut={this.handleSignOut} />
+                    ) : (
+                        <SignOutMenu signIn={this.handleSignIn} />
+                    )}
                 </Container>
             </Menu>
         );
     }
 }
 
-export default NavBar;
+export default withRouter (NavBar);
