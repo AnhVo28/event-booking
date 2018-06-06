@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import SettingsNav from './SettingsNav';
@@ -7,7 +8,7 @@ import AboutPage from './AboutPage';
 import AccountPage from './AccountPage';
 import PhotoPage from './PhotoPage';
 
-const SettingsDashboard = () => {
+const SettingsDashboard = (props) => {
     return (
         <Grid>
             <Grid.Column width={12}>
@@ -27,4 +28,8 @@ const SettingsDashboard = () => {
     );
 };
 
-export default SettingsDashboard;
+const mapStateToProps = state => ({
+    data: state.test.data
+});
+
+export default connect(mapStateToProps)(SettingsDashboard);
