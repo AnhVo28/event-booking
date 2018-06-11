@@ -52,7 +52,8 @@ export class EventListItem extends Component {
                         content="Delete"
                     />
                     <Button
-                        onClick={onEventEdit(event)}
+                        as={Link}
+                        to={`/event/${event.id}`}
                         color="teal"
                         floated="right"
                         content="View"

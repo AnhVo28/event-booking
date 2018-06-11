@@ -6,6 +6,7 @@ import './index.css';
 import { configureStore } from './app/store/configureStore';
 import 'semantic-ui-css/semantic.min.css';
 import App from './app/layout/App.jsx';
+import ScollToTop from './app/common/util/SrollToTop';
 import registerServiceWorker from './registerServiceWorker';
 
 const store = configureStore();
@@ -13,7 +14,9 @@ const store = configureStore();
 ReactDOM.render(
     <Provider store={store}>
         <BrowserRouter>
-            <App />
+            <ScollToTop>
+                <App />
+            </ScollToTop>
         </BrowserRouter>
     </Provider>,
     document.getElementById('root')
