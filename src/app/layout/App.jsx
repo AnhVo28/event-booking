@@ -17,21 +17,46 @@ class App extends Component {
                 <Switch>
                     <Route exact path="/" component={HomePage} />
                 </Switch>
-                <Route path="/(.+)" render={()=>(
-                    <div>
-                        <NavBar />
-                        <Container className="main">
-                            <Switch>
-                                <Route path="/events" component={EventDashboard} />
-                                <Route path="/event/:id" component={EventDetailedPage} />
-                                <Route path="/people" component={PeopleDashboard} />
-                                <Route path="/profile/:id" component={UserDetailed} />
-                                <Route path="/settings" component={SettingsDashboard} />
-                                <Route path="/createEvent" component={EventForm} />
-                            </Switch>
-                        </Container>
-                    </div>
-                )}/>
+                <Route
+                    path="/(.+)"
+                    render={() => (
+                        <div>
+                            <NavBar />
+                            <Container className="main">
+                                <Switch>
+                                    <Route
+                                        path="/events"
+                                        component={EventDashboard}
+                                    />
+                                    <Route
+                                        path="/event/:id"
+                                        component={EventDetailedPage}
+                                    />
+                                    <Route
+                                        path="/people"
+                                        component={PeopleDashboard}
+                                    />
+                                    <Route
+                                        path="/manage/:id"
+                                        component={EventForm}
+                                    />
+                                    <Route
+                                        path="/profile/:id"
+                                        component={UserDetailed}
+                                    />
+                                    <Route
+                                        path="/settings"
+                                        component={SettingsDashboard}
+                                    />
+                                    <Route
+                                        path="/createEvent"
+                                        component={EventForm}
+                                    />
+                                </Switch>
+                            </Container>
+                        </div>
+                    )}
+                />
             </div>
         );
     }
