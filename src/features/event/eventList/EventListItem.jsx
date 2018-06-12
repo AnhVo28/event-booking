@@ -7,7 +7,7 @@ class EventListItem extends Component {
     render() {
         
         const { event, onEventDelete } = this.props;
-        return (
+        return (    
             <Segment.Group>
                 <Segment>
                     <Item.Group>

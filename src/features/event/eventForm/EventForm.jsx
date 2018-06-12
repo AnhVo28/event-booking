@@ -3,10 +3,18 @@ import { connect } from 'react-redux';
 import { reduxForm, Field } from 'redux-form';
 import { Segment, Form, Button, Grid, Header } from 'semantic-ui-react';
 import { createEvent, updateEvent } from '../eventActions';
+import {
+    composeValidators,
+    combineValidators,
+    isRequired,
+    hasLengthGreaterThan
+} from 'revalidate';
+import moment from 'moment';
 import cuid from 'cuid';
 import TextInput from '../../../app/common/form/TextInput';
 import TextArea from '../../../app/common/form/TextArea';
 import SelectInput from '../../../app/common/form/SelectInput';
+import DateInput from '../../../app/common/form/DateInput';
 
 const mapStateToProps = (state, ownProps) => {
     const eventId = ownProps.match.params.id;
@@ -35,8 +43,24 @@ const category = [
     { key: 'music', text: 'Music', value: 'music' },
     { key: 'travel', text: 'Travel', value: 'travel' }
 ];
-export class EventForm extends Component {
+
+const validate = combineValidators({
+    title: isRequired({ message: 'The event title is required' }),
+    category: isRequired({ message: 'Please provide a category' }),
+    description: composeValidators(
+        isRequired({ message: 'Please enter the description' }),
+        hasLengthGreaterThan(4)({
+            message: 'Description needs to be at least 5 characters'
+        })
+    )(),
+    city: isRequired('City'),
+    venue: isRequired('Venue'),
+    date: isRequired('Date')
+});
+
+class EventForm extends Component {
     onFormSubmit = values => {
+        values.date = moment(values.date).format();
         if (this.props.initialValues.id) {
             this.props.updateEvent(values);
             this.props.history.goBack();
@@ -54,6 +78,7 @@ export class EventForm extends Component {
     };
 
     render() {
+        const { invalid, submitting, pristine } = this.props;
         return (
             <Grid>
                 <Grid.Column width={10}>
@@ -104,11 +129,18 @@ export class EventForm extends Component {
                             <Field
                                 name="date"
                                 type="text"
-                                component={TextInput}
-                                placeholder="Event Date"
+                                component={DateInput}
+                                dateFormat="YYYY-MM-DD HH:mm"
+                                timeFormat="HH:mm"
+                                showTimeSelect
+                                placeholder="Date and Time of event"
                             />
 
-                            <Button positive type="submit">
+                            <Button
+                                disabled={invalid || submitting || pristine}
+                                positive
+                                type="submit"
+                            >
                                 Submit
                             </Button>
                             <Button
@@ -128,4 +160,8 @@ export class EventForm extends Component {
 export default connect(
     mapStateToProps,
     action
-)(reduxForm({ form: 'eventForm', enableReinitialize: true })(EventForm));
+)(
+    reduxForm({ form: 'eventForm', enableReinitialize: true, validate })(
+        EventForm
+    )
+);
