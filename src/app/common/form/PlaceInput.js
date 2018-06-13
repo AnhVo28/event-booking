@@ -26,6 +26,7 @@ class PlaceInput extends Component {
             options,
             meta: { touched, error }
         } = this.props;
+        
         return (
             <Form.Field error={touched && !!error} width={width}>
                 <Script
