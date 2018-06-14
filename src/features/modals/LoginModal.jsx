@@ -8,12 +8,17 @@ import {closeModal} from './modalActions';
 const actions = {closeModal};
 
 class LoginModal extends Component {
+
+    handleClose = () =>{
+        this.props.closeModal();
+    }
+
     render() {
         return (
             <Modal
                 size='mini'
                 open={true}
-                onClose={this.props.closeModal}
+                onClose={this.handleClose}
             >
                 <Modal.Header>
                     Login to Re-vents

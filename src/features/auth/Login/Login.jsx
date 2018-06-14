@@ -1,11 +1,17 @@
 import React from 'react';
 import { Form, Segment, Button } from 'semantic-ui-react';
+import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
 import TextInput from '../../../app/common/form/TextInput';
+import { login } from '../authActions';
 
-const LoginForm = () => {
+const actions={
+    login
+};
+
+const LoginForm = ({login, handleSubmit}) => {
     return (
-        <Form error size="large">
+        <Form error size="large" onSubmit={handleSubmit(login)}>
             <Segment>
                 <Field
                     name="email"
@@ -20,11 +26,11 @@ const LoginForm = () => {
                     placeholder="password"
                 />
                 <Button fluid size="large" color="teal">
-          Login
+                    Login
                 </Button>
             </Segment>
         </Form>
     );
 };
 
-export default reduxForm({form: 'loginForm'})(LoginForm);
+export default connect(null, actions)(reduxForm({ form: 'loginForm' })(LoginForm));
