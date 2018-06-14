@@ -6,13 +6,17 @@ import PlacesAutocomplete, {
     geocodeByAddress,
     getLatLng
 } from 'react-places-autocomplete';
-import { Icon } from 'semantic-ui-react';
+import { Icon, Button } from 'semantic-ui-react';
 import GoogleMapReact from 'google-map-react';
+import {openModal} from '../modals/modalActions';
 
 const mapState = state => ({
     data: state.test.data
 });
 
+const actions = {
+    openModal
+};
 const Marker = () => <Icon name="marker" size="big" color="red" />;
 
 class TestComponent extends Component {
@@ -66,6 +70,7 @@ class TestComponent extends Component {
                         <PlacesAutocomplete inputProps={inputProps} />
                     )}
                     <button type="submit">Submit</button>
+                    <Button color='teal' content="open" onClick={()=>this.props.openModal('TestModal', {data: 'haha'})}></Button>
                 </form>
                 <br />
                 <br />
@@ -89,4 +94,4 @@ class TestComponent extends Component {
     }
 }
 
-export default connect(mapState)(TestComponent);
+export default connect(mapState, actions)(TestComponent);
