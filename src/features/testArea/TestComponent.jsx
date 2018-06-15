@@ -8,14 +8,23 @@ import PlacesAutocomplete, {
 } from 'react-places-autocomplete';
 import { Icon, Button } from 'semantic-ui-react';
 import GoogleMapReact from 'google-map-react';
-import {openModal} from '../modals/modalActions';
+import { openModal } from '../modals/modalActions';
+import {
+    incrementAsync,
+    decrementAsync,
+    incrementCounter
+} from './testActions';
 
 const mapState = state => ({
-    data: state.test.data
+    data: state.test.data,
+    loading: state.test.loading
 });
 
 const actions = {
-    openModal
+    openModal,
+    incrementAsync,
+    decrementAsync,
+    incrementCounter
 };
 const Marker = () => <Icon name="marker" size="big" color="red" />;
 
@@ -70,7 +79,25 @@ class TestComponent extends Component {
                         <PlacesAutocomplete inputProps={inputProps} />
                     )}
                     <button type="submit">Submit</button>
-                    <Button color='teal' content="open" onClick={()=>this.props.openModal('TestModal', {data: 'haha'})}></Button>
+                    <Button
+                        color="teal"
+                        content="open"
+                        onClick={() =>
+                            this.props.openModal('TestModal', { data: 'haha' })
+                        }
+                    />
+                    <Button
+                        loading={this.props.loading}
+                        color="green"
+                        content="Inrement"
+                        onClick={this.props.incrementAsync}
+                    />
+                    <Button
+                        loading={this.props.loading}
+                        color="red"
+                        content="Derement"
+                        onClick={this.props.decrementAsync}
+                    />
                 </form>
                 <br />
                 <br />
@@ -94,4 +121,7 @@ class TestComponent extends Component {
     }
 }
 
-export default connect(mapState, actions)(TestComponent);
+export default connect(
+    mapState,
+    actions
+)(TestComponent);

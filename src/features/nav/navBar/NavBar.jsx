@@ -23,7 +23,6 @@ class NavBar extends Component {
         //     authenticated: true
         // });
         this.props.openModal('LoginModal');
-        
     };
 
     handleRegister = () => {
