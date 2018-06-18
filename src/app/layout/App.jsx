@@ -11,6 +11,7 @@ import PeopleDashboard from '../../features/user/PeopleDashboard/PeopleDashboard
 import HomePage from '../../features/home/HomePage';
 import TestComponent from '../../features/testArea/TestComponent';
 import ModalMananger from '../../features/modals/ModalMananger';
+
 class App extends Component {
     render() {
         return (
@@ -58,6 +59,7 @@ class App extends Component {
                                         path="/createEvent"
                                         component={EventForm}
                                     />
+                                    
                                 </Switch>
                             </Container>
                         </div>

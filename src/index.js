@@ -8,8 +8,10 @@ import 'semantic-ui-css/semantic.min.css';
 import App from './app/layout/App.jsx';
 import ScollToTop from './app/common/util/SrollToTop';
 import registerServiceWorker from './registerServiceWorker';
+import { loadEvents } from './features/event/eventActions';
 
 const store = configureStore();
+store.dispatch(loadEvents());
 
 ReactDOM.render(
     <Provider store={store}>
