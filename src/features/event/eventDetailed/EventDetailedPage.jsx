@@ -18,6 +18,7 @@ const mapState = (state, ownProps) => {
     }
 
     // Return the Obj since currently in MapToProps 
+    debugger;
     return {
         event
     };
