@@ -6,6 +6,7 @@ export const login = creds => {
     return async (dispatch, getState, { getFirebase }) => {
         const firebase = getFirebase();
         try {
+            // comparing the result with the existing database
             await firebase
                 .auth()
                 .signInWithEmailAndPassword(creds.email, creds.password);
@@ -47,6 +48,9 @@ export const registerUser = user => async (
         await firestore.set(`users/${createdUser.uid}`, {...newUser});
         dispatch(closeModal());
     } catch (error) {
-        console.log('createNewUser: ', error);
+        // pass the error props to login form
+        throw new SubmissionError({
+            _error: error.message
+        });
     }
 };
