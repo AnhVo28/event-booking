@@ -1,4 +1,3 @@
-import { SIGN_OUT_USER } from './authConstants';
 import { closeModal } from '../modals/modalActions';
 import { toastr } from 'react-redux-toastr';
 import { SubmissionError } from 'redux-form';
@@ -21,8 +20,33 @@ export const login = creds => {
     };
 };
 
-export const logout = () => {
-    return {
-        type: SIGN_OUT_USER
-    };
+export const registerUser = user => async (
+    dispatch,
+    getState,
+    { getFirebase, getFirestore }
+) => {
+    try {
+        const firebase = getFirebase();
+        const firestore = getFirestore();
+
+        // Create the user in auth
+        let createdUser = await firebase
+            .auth()
+            .createUserWithEmailAndPassword(user.email, user.password);
+        console.log('createdUser:', createdUser);
+        // Update the auth profile in firebase profile in redux
+        await createdUser.updateProfile({
+            displayName: user.displayName
+        });
+        // Create the new profile
+        let newUser = {
+            displayName: user.displayName,
+            createdAt: firestore.FieldValue.serverTimestamp()
+        };
+
+        await firestore.set(`users/${createdUser.uid}`, {...newUser});
+        dispatch(closeModal());
+    } catch (error) {
+        console.log('createNewUser: ', error);
+    }
 };

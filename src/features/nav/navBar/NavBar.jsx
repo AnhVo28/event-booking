@@ -5,12 +5,10 @@ import SignOutMenu from '../menus/SignOutMenu';
 import SignInMenu from '../menus/SignInMenu';
 import { openModal, closeModal } from '../../modals/modalActions';
 import { connect } from 'react-redux';
-import { logout } from '../../auth/authActions';
 import { withFirebase } from 'react-redux-firebase';
 
 const actions = {
     openModal,
-    logout,
     closeModal
 };
 
