@@ -45,7 +45,7 @@ export const registerUser = user => async (
             createdAt: firestore.FieldValue.serverTimestamp()
         };
 
-        await firestore.set(`users/${createdUser.uid}`, {...newUser});
+        await firestore.set(`users/${createdUser.uid}`, { ...newUser });
         dispatch(closeModal());
     } catch (error) {
         // pass the error props to login form
@@ -55,18 +55,19 @@ export const registerUser = user => async (
     }
 };
 
-export const socialLogin = (selectedProvider) => {
+export const socialLogin = selectedProvider => {
     return async (dispatch, getState, { getFirebase }) => {
         const firebase = getFirebase();
         try {
             dispatch(closeModal());
-            await firebase.login({
+            let user = await firebase.login({
                 provider: selectedProvider,
                 type: 'popup'
             });
+
+            console.log('user: ', user);
         } catch (error) {
             console.log(error);
-
         }
     };
 };
