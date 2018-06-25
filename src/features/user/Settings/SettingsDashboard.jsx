@@ -10,7 +10,8 @@ import PhotoPage from './PhotoPage';
 import { updatePassword } from '../../auth/authActions';
 
 const mapStateToProps = state => ({
-    providerId: state.firebase.auth.isLoaded && state.firebase.auth.providerData[0].providerId
+    providerId: state.firebase.auth.isLoaded && state.firebase.auth.providerData[0].providerId,
+    user: state.firebase.profile
 });
 
 const actions = {
@@ -22,10 +23,9 @@ const SettingsDashboard = props => {
     return (
         <Grid>
             <Grid.Column width={12}>
-                <h1>Settings</h1>
                 <Switch>
                     <Redirect exact from="/settings" to="/settings/basics" />
-                    <Route path="/settings/basics" component={BasicPage} />
+                    <Route path="/settings/basics" render={()=><BasicPage initialValues={props.user} />} />
                     <Route path="/settings/about" component={AboutPage} />
                     <Route path="/settings/photos" component={PhotoPage} />
                     <Route
