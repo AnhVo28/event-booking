@@ -6,14 +6,25 @@ import DateInput from '../../../app/common/form/DateInput';
 import PlaceInput from '../../../app/common/form/PlaceInput';
 import TextInput from '../../../app/common/form/TextInput';
 import RadioInput from '../../../app/common/form/RadioInput';
+import { updateProfile } from '../userActions';
+import { connect } from 'react-redux';
+
+const actions = {
+    updateProfile
+};
 
 class BasicsPage extends Component {
     render() {
-        const { pristine, submitting } = this.props;
+        const {
+            pristine,
+            submitting,
+            updateProfile,
+            handleSubmit
+        } = this.props;
         return (
             <Segment>
                 <Header dividing size="large" content="Basics" />
-                <Form>
+                <Form onSubmit={handleSubmit(updateProfile)}>
                     <Field
                         width={8}
                         name="displayName"
@@ -24,19 +35,19 @@ class BasicsPage extends Component {
                     <Form.Group inline>
                         {/* todo: Gender Radio button */}
                         <label>Gender: </label>
-                        <Field 
-                            name='gender'
-                            type='radio'
+                        <Field
+                            name="gender"
+                            type="radio"
                             component={RadioInput}
-                            value='male'
-                            label='Male'
+                            value="male"
+                            label="Male"
                         />
-                        <Field 
-                            name='gender'
-                            type='radio'
+                        <Field
+                            name="gender"
+                            type="radio"
                             component={RadioInput}
-                            value='female'
-                            label='Female'
+                            value="female"
+                            label="Female"
                         />
                     </Form.Group>
                     <Field
@@ -47,7 +58,7 @@ class BasicsPage extends Component {
                         dateFormat="YYYY-MM-DD"
                         showYearDropdown={true}
                         showMonthDropdown={true}
-                        dropDownMode='select'
+                        dropDownMode="select"
                         maxDate={moment().subtract(18, 'years')}
                     />
                     <Field
@@ -71,6 +82,12 @@ class BasicsPage extends Component {
     }
 }
 
-export default reduxForm({ form: 'userProfile', enableReinitialize: true })(
-    BasicsPage
+export default connect(
+    null,
+    actions
+)(
+    reduxForm({
+        form: 'userProfile',
+        enableReinitialize: true
+    })(BasicsPage)
 );

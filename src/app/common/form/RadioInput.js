@@ -3,8 +3,6 @@ import { Form } from 'semantic-ui-react';
 
 const RadioInput = (props) => {
     const { input, type, label } = props;
-    console.log('input props: ', props);
-    
     return (
         <Form.Field>
             <div className='ui radio'>
