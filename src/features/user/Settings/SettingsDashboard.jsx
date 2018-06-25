@@ -7,8 +7,13 @@ import BasicPage from './BasicPage';
 import AboutPage from './AboutPage';
 import AccountPage from './AccountPage';
 import PhotoPage from './PhotoPage';
+import { updatePassword } from '../../auth/authActions';
 
-const SettingsDashboard = (props) => {
+const actions = {
+    updatePassword
+};
+
+const SettingsDashboard = props => {
     return (
         <Grid>
             <Grid.Column width={12}>
@@ -18,7 +23,14 @@ const SettingsDashboard = (props) => {
                     <Route path="/settings/basics" component={BasicPage} />
                     <Route path="/settings/about" component={AboutPage} />
                     <Route path="/settings/photos" component={PhotoPage} />
-                    <Route path="/settings/account" component={AccountPage} />
+                    <Route
+                        path="/settings/account"
+                        render={() => (
+                            <AccountPage
+                                updatePassword={props.updatePassword}
+                            />
+                        )}
+                    />
                 </Switch>
             </Grid.Column>
             <Grid.Column width={4}>
@@ -28,8 +40,7 @@ const SettingsDashboard = (props) => {
     );
 };
 
-const mapStateToProps = state => ({
-    data: state.test.data
-});
-
-export default connect(mapStateToProps)(SettingsDashboard);
+export default connect(
+    null,
+    actions
+)(SettingsDashboard);

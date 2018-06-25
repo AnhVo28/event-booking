@@ -1,4 +1,5 @@
 import { closeModal } from '../modals/modalActions';
+import { reset } from 'redux-form';
 import { toastr } from 'react-redux-toastr';
 import { SubmissionError } from 'redux-form';
 
@@ -67,8 +68,6 @@ export const socialLogin = selectedProvider => {
                 type: 'popup'
             });
 
-            console.log('user: ', user);
-
             if (user.additionalUserInfo.isNewUser) {
                 await firestore.set(`users/${user.user.uid}`, {
                     displayName: user.profile.displayName,
@@ -80,4 +79,22 @@ export const socialLogin = selectedProvider => {
             console.log(error);
         }
     };
+};
+
+export const updatePassword = creds => async (
+    dispatch,
+    getState,
+    { getFirebase }
+) => {
+    const firebase = getFirebase();
+    const user = firebase.auth().currentUser;
+    try {
+        await user.updatePassword(creds.newPassword1);
+        await dispatch(reset('account'));
+        toastr.success('Success', 'Your password has been updated');
+    } catch (error) {
+        throw new SubmissionError({
+            _error: error.message
+        });
+    }
 };
