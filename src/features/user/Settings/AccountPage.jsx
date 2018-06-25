@@ -30,11 +30,13 @@ const AccountPage = ({
     submitting,
     invalid,
     updatePassword,
-    handleSubmit
+    handleSubmit,
+    providerId
 }) => {
     return (
         <Segment>
             <Header dividing size="large" content="Account" />
+            {providerId && providerId === 'password' &&
             <div>
                 <Header color="teal" sub content="Change password" />
                 <p>Use this form to update your account settings</p>
@@ -72,8 +74,8 @@ const AccountPage = ({
                         content="Update Password"
                     />
                 </Form>
-            </div>
-
+            </div>}
+            {providerId && providerId === 'facebook.com' &&
             <div>
                 <Header color="teal" sub content="Facebook Account" />
                 <p>Please visit Facebook to update your account settings</p>
@@ -81,8 +83,8 @@ const AccountPage = ({
                     <Icon name="facebook" />
                     Go to Facebook
                 </Button>
-            </div>
-
+            </div>}
+            {providerId && providerId === 'google.com' &&
             <div>
                 <Header color="teal" sub content="Google Account" />
                 <p>Please visit Google to update your account settings</p>
@@ -90,7 +92,7 @@ const AccountPage = ({
                     <Icon name="google plus" />
                     Go to Google
                 </Button>
-            </div>
+            </div>}
         </Segment>
     );
 };

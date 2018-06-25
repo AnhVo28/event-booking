@@ -9,11 +9,16 @@ import AccountPage from './AccountPage';
 import PhotoPage from './PhotoPage';
 import { updatePassword } from '../../auth/authActions';
 
+const mapStateToProps = state => ({
+    providerId: state.firebase.auth.isLoaded && state.firebase.auth.providerData[0].providerId
+});
+
 const actions = {
     updatePassword
 };
 
 const SettingsDashboard = props => {
+
     return (
         <Grid>
             <Grid.Column width={12}>
@@ -28,6 +33,7 @@ const SettingsDashboard = props => {
                         render={() => (
                             <AccountPage
                                 updatePassword={props.updatePassword}
+                                providerId={props.providerId}
                             />
                         )}
                     />
@@ -41,6 +47,6 @@ const SettingsDashboard = props => {
 };
 
 export default connect(
-    null,
+    mapStateToProps,
     actions
 )(SettingsDashboard);
