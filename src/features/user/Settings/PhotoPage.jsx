@@ -10,11 +10,15 @@ import {
     Icon
 } from 'semantic-ui-react';
 import Dropzone from 'react-dropzone';
+import Cropper from 'react-cropper';
+import 'cropperjs/dist/cropper.css';
 
 class PhotosPage extends Component {
     state = {
         files: [],
-        fileName: ''
+        fileName: '',
+        cropResult: null,
+        image: {}
     };
 
     onDrop = files => {
@@ -24,10 +28,21 @@ class PhotosPage extends Component {
         });
     };
 
-    render() {
-        if (this.state.files[0]) {
-            console.log(this.state.files[0]);
+    cropImage = () => {
+        if (this.refs.cropper.getCroppedCanvas() === undefined) {
+            return;
         }
+        // get the new Url and new cropped img
+        this.refs.cropper.getCroppedCanvas().toBlob(blob => {
+            let imageUrl = URL.createObjectURL(blob);
+            this.setState({
+                cropResult: imageUrl,
+                image: blob
+            });
+        });
+    };
+
+    render() {
         return (
             <Segment>
                 <Header dividing size="large" content="Your Photos" />
@@ -57,6 +72,21 @@ class PhotosPage extends Component {
                             color="teal"
                             content="Step 2 - Resize image"
                         />
+                        {this.state.files[0] && (
+                            <Cropper
+                                style={{ height: 200, width: '100%' }}
+                                ref="cropper"
+                                src={this.state.files[0].preview}
+                                aspectRatio={1}
+                                viewMode={0}
+                                dragMode="move"
+                                guides={true}
+                                scalable={true}
+                                cropBoxMovable={true}
+                                cropBoxResizable={true}
+                                crop={this.cropImage}
+                            />
+                        )}
                     </Grid.Column>
                     <Grid.Column width={1} />
                     <Grid.Column width={4}>
@@ -71,7 +101,7 @@ class PhotosPage extends Component {
                                     minHeight: '200px',
                                     minWidth: '200px'
                                 }}
-                                src={this.state.files[0].preview}
+                                src={this.state.cropResult}
                             />
                         )}
                     </Grid.Column>
