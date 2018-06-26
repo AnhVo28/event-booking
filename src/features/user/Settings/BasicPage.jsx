@@ -6,12 +6,8 @@ import DateInput from '../../../app/common/form/DateInput';
 import PlaceInput from '../../../app/common/form/PlaceInput';
 import TextInput from '../../../app/common/form/TextInput';
 import RadioInput from '../../../app/common/form/RadioInput';
-import { updateProfile } from '../userActions';
-import { connect } from 'react-redux';
 
-const actions = {
-    updateProfile
-};
+
 
 class BasicsPage extends Component {
     render() {
@@ -82,12 +78,4 @@ class BasicsPage extends Component {
     }
 }
 
-export default connect(
-    null,
-    actions
-)(
-    reduxForm({
-        form: 'userProfile',
-        enableReinitialize: true
-    })(BasicsPage)
-);
+export default reduxForm({ form: 'userProfile', enableReinitialize: true, destroyOnUnmount: false})(BasicsPage);
