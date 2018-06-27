@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Grid } from 'semantic-ui-react';
 import EventList from '../eventList/EventList';
 import { connect } from 'react-redux';
-import { firestoreConnect } from 'react-redux-firebase';
+import { firestoreConnect, } from 'react-redux-firebase';
 import { deleteEvent } from '../eventActions';
 import LoadingComp from '../../../app/layout/LoadingComp';
 import EventActivity from '../eventActivity/EventActivity';
