@@ -70,9 +70,10 @@ class PhotosPage extends Component {
         }
     };
 
-    handleDeletePhoto = (photo) => async() => {
+    handleDeletePhoto = photo => async () => {
+        debugger;
         try {
-            await this.props.deletePhoto();
+            await this.props.deletePhoto(photo);
             toastr.success('Success', 'Photo has been deleted');
         } catch (error) {
             toastr.error('Oops', error.message);
@@ -207,7 +208,12 @@ class PhotosPage extends Component {
                                     <Button basic color="green">
                                         Main
                                     </Button>
-                                    <Button onClick={this.handleDeletePhoto(photo)} basic icon="trash" color="red" />
+                                    <Button
+                                        onClick={this.handleDeletePhoto(photo)}
+                                        basic
+                                        icon="trash"
+                                        color="red"
+                                    />
                                 </div>
                             </Card>
                         ))}
