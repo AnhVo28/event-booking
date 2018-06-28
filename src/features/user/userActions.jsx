@@ -88,18 +88,30 @@ export const deletePhoto = photo => async (
     const user = firebase.auth().currentUser;
 
     try {
-        // delete photo from firebase storage   
+        // delete photo from firebase storage
         await firebase.deleteFile(`${user.uid}/user_images/${photo.name}`);
         // delete photo from firestore db
         await firestore.delete({
             collection: 'users',
             doc: user.uid,
-            subcollections: [{ collection: 'photos', doc: photo.id}]
+            subcollections: [{ collection: 'photos', doc: photo.id }]
         });
-
-        
     } catch (error) {
         console.log('error: ', error.message);
-        
+    }
+};
+
+export const setMainPhoto = photo => async (
+    dispatch,
+    getState,
+    { getFirebase }
+) => {
+    const firebase = getFirebase();
+    try {
+        return await firebase.updateProfile({
+            photoURL: photo.url
+        });
+    } catch (error) {
+        console.log('error: ', error.message);
     }
 };
