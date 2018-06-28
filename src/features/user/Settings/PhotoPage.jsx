@@ -13,20 +13,22 @@ import { connect } from 'react-redux';
 import Dropzone from 'react-dropzone';
 import Cropper from 'react-cropper';
 import 'cropperjs/dist/cropper.css';
-import { uploadProfileImage, deletePhoto } from '../userActions';
+import { uploadProfileImage, deletePhoto, setMainPhoto } from '../userActions';
 import { toastr } from 'react-redux-toastr';
 import { firestoreConnect } from 'react-redux-firebase';
 import { compose } from 'redux';
 
 const actions = {
     uploadProfileImage,
-    deletePhoto
+    deletePhoto,
+    setMainPhoto
 };
 
 const mapState = state => ({
     auth: state.firebase.auth,
     profile: state.firebase.profile,
-    photos: state.firestore.ordered.photos
+    photos: state.firestore.ordered.photos,
+    loading: state.async.loading
 });
 
 // Query in our firebase
@@ -70,11 +72,20 @@ class PhotosPage extends Component {
         }
     };
 
+    // wraped func since we do not want to add another func in onClick
     handleDeletePhoto = photo => async () => {
-        debugger;
         try {
             await this.props.deletePhoto(photo);
             toastr.success('Success', 'Photo has been deleted');
+        } catch (error) {
+            toastr.error('Oops', error.message);
+        }
+    };
+
+    handleSetMainImage = photo => async () => {
+        try {
+            await this.props.setMainPhoto(photo);
+            toastr.success('Success', 'Photo has been chosen as main avatar');
         } catch (error) {
             toastr.error('Oops', error.message);
         }
@@ -102,9 +113,7 @@ class PhotosPage extends Component {
     };
 
     render() {
-        const { photos, profile } = this.props;
-
-        console.log('photos: ', photos);
+        const { photos, profile, loading } = this.props;
         let filteredPhotos;
         if (photos) {
             filteredPhotos = photos.filter(photo => {
@@ -175,12 +184,14 @@ class PhotosPage extends Component {
                                 />
                                 <Button.Group>
                                     <Button
+                                        loading={loading}
                                         onClick={this.uploadImage}
                                         style={{ width: '100px' }}
                                         positive
                                         icon="check"
                                     />
                                     <Button
+                                        disabled={loading}
                                         onClick={this.cancelCrop}
                                         style={{ width: '100px' }}
                                         icon="close"
@@ -196,7 +207,7 @@ class PhotosPage extends Component {
 
                 <Card.Group itemsPerRow={5}>
                     <Card>
-                        <Image src={profile.photoURL} />
+                        <Image src={profile.photoURL || '/assets/user.png'} />
 
                         <Button positive>Main Photo</Button>
                     </Card>
@@ -205,7 +216,11 @@ class PhotosPage extends Component {
                             <Card key={photo.id}>
                                 <Image src={photo.url} />
                                 <div className="ui two buttons">
-                                    <Button basic color="green">
+                                    <Button
+                                        onClick={this.handleSetMainImage(photo)}
+                                        basic
+                                        color="green"
+                                    >
                                         Main
                                     </Button>
                                     <Button
