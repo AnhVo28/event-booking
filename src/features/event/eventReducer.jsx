@@ -8,7 +8,7 @@ import {
 
 const initialState = [
     {
-        id: '1',
+        id: 'BDo6zpBBmjxpLZSntBsf',
         title: 'Trip to Empire State building',
         date: '2018-03-21',
         category: 'culture',
@@ -81,7 +81,6 @@ export const deleteEvent = (state, payload) => {
 };
 
 export const fetchEvents = (state, payload) => {
-   
     return payload.events;
 };
 
