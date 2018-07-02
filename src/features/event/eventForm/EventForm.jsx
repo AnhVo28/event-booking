@@ -12,22 +12,23 @@ import {
     isRequired,
     hasLengthGreaterThan
 } from 'revalidate';
-import moment from 'moment';
+// import moment from 'moment';
 import { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
+import { withFirestore } from 'react-redux-firebase';
 import TextInput from '../../../app/common/form/TextInput';
 import TextArea from '../../../app/common/form/TextArea';
 import SelectInput from '../../../app/common/form/SelectInput';
 import DateInput from '../../../app/common/form/DateInput';
 import PlaceInput from '../../../app/common/form/PlaceInput';
 
-const mapStateToProps = (state, ownProps) => {
-    const eventId = ownProps.match.params.id;
-
+const mapStateToProps = state => {
     let event = {};
 
-    if (eventId && state.events.length > 0) {
-        event = state.events.filter(event => event.id === eventId)[0];
+    // Return the matched eventId when routing
+    if (state.firestore.ordered.events && state.firestore.ordered.events[0]) {
+        event = state.firestore.ordered.events[0];
     }
+
     return {
         // Poplulate the data right after clicking manage event
         initialValues: event
@@ -69,6 +70,17 @@ class EventForm extends Component {
         scriptLoaded: false
     };
 
+    // Get the event from firestore
+    async componentDidMount() {
+        const { firestore, match } = this.props;
+        let event = await firestore.get(`events/${match.params.id}`);
+        if (event.exists) {
+            this.setState({
+                venueLatLng: event.data().venueLatLng
+            });
+        }
+    }
+
     handleCitySelect = selectedCity => {
         geocodeByAddress(selectedCity)
             .then(results => getLatLng(results[0]))
@@ -77,8 +89,8 @@ class EventForm extends Component {
                     cityLatLng: latlng
                 });
             })
-            .then(()=>{
-                this.props.change('city', selectedCity);    
+            .then(() => {
+                this.props.change('city', selectedCity);
             });
     };
     handleVenueSelect = selectedVenue => {
@@ -86,22 +98,20 @@ class EventForm extends Component {
             .then(results => getLatLng(results[0]))
             .then(latlng => {
                 this.setState({
-                    VenueLatLng: latlng
+                    venueLatLng: latlng
                 });
             })
-            .then(()=>{
-                this.props.change('venue', selectedVenue);    
+            .then(() => {
+                this.props.change('venue', selectedVenue);
             });
     };
 
     onFormSubmit = values => {
-        values.date = moment(values.date).format();
-        values.venueLatLng= this.state.VenueLatLng;
+        values.venueLatLng = this.state.venueLatLng;
         if (this.props.initialValues.id) {
             this.props.updateEvent(values);
             this.props.history.goBack();
         } else {
-            
             this.props.createEvent(values);
             this.props.history.push('/events');
         }
@@ -207,11 +217,13 @@ class EventForm extends Component {
     }
 }
 
-export default connect(
-    mapStateToProps,
-    action
-)(
-    reduxForm({ form: 'eventForm', enableReinitialize: true, validate })(
-        EventForm
+export default withFirestore(
+    connect(
+        mapStateToProps,
+        action
+    )(
+        reduxForm({ form: 'eventForm', enableReinitialize: true, validate })(
+            EventForm
+        )
     )
 );

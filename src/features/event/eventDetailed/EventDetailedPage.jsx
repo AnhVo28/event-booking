@@ -24,10 +24,11 @@ const mapState = state => {
 };
 
 export class EventDetailedPage extends Component {
+
+    // Get the event from firestore 
     async componentDidMount() {
         const { firestore, match, history } = this.props;
         let event = await firestore.get(`events/${match.params.id}`);
-        console.log(event);
         if (!event.exists) {
             history.push('/events');
             toastr.error('Sorry', 'Event not found');
@@ -38,7 +39,6 @@ export class EventDetailedPage extends Component {
         const { event } = this.props;
         const attendees =
             event && event.attendees && objectToArray(event.attendees);
-        console.log('attendees: ', attendees);
 
         return (
             <Grid>
