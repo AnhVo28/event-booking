@@ -79,6 +79,11 @@ class EventForm extends Component {
         await firestore.setListener(`events/${match.params.id}`);
     }
 
+    async componentWillUnmount() {
+        const { firestore, match } = this.props;
+        await firestore.unsetListener(`events/${match.params.id}`);
+    }
+
     handleCitySelect = selectedCity => {
         geocodeByAddress(selectedCity)
             .then(results => getLatLng(results[0]))
@@ -106,8 +111,8 @@ class EventForm extends Component {
 
     onFormSubmit = values => {
         values.venueLatLng = this.state.venueLatLng;
-        // Check if the venueLatLeng is empty 
-        if (Object.keys(values.venueLatLng).length === 0 ) {
+        // Check if the venueLatLeng is empty
+        if (Object.keys(values.venueLatLng).length === 0) {
             values.venueLatLng = this.props.event.venueLatLng;
         }
         if (this.props.initialValues.id) {
