@@ -20,6 +20,7 @@ import TextArea from '../../../app/common/form/TextArea';
 import SelectInput from '../../../app/common/form/SelectInput';
 import DateInput from '../../../app/common/form/DateInput';
 import PlaceInput from '../../../app/common/form/PlaceInput';
+import { cancelEvent } from '../eventActions';
 
 const mapStateToProps = state => {
     let event = {};
@@ -31,13 +32,15 @@ const mapStateToProps = state => {
 
     return {
         // Poplulate the data right after clicking manage event
-        initialValues: event
+        initialValues: event,
+        event
     };
 };
 
 const action = {
     createEvent,
-    updateEvent
+    updateEvent,
+    cancelEvent
 };
 
 const category = [
@@ -73,12 +76,7 @@ class EventForm extends Component {
     // Get the event from firestore
     async componentDidMount() {
         const { firestore, match } = this.props;
-        let event = await firestore.get(`events/${match.params.id}`);
-        if (event.exists) {
-            this.setState({
-                venueLatLng: event.data().venueLatLng
-            });
-        }
+        await firestore.setListener(`events/${match.params.id}`);
     }
 
     handleCitySelect = selectedCity => {
@@ -108,6 +106,10 @@ class EventForm extends Component {
 
     onFormSubmit = values => {
         values.venueLatLng = this.state.venueLatLng;
+        // Check if the venueLatLeng is empty 
+        if (Object.keys(values.venueLatLng).length === 0 ) {
+            values.venueLatLng = this.props.event.venueLatLng;
+        }
         if (this.props.initialValues.id) {
             this.props.updateEvent(values);
             this.props.history.goBack();
@@ -122,7 +124,13 @@ class EventForm extends Component {
     };
 
     render() {
-        const { invalid, submitting, pristine } = this.props;
+        const {
+            invalid,
+            submitting,
+            pristine,
+            cancelEvent,
+            event
+        } = this.props;
         return (
             <Grid>
                 <Script
@@ -209,6 +217,19 @@ class EventForm extends Component {
                             >
                                 Cancel
                             </Button>
+                            <Button
+                                onClick={() =>
+                                    cancelEvent(!event.cancelled, event.id)
+                                }
+                                type="button"
+                                floated="right"
+                                color={event.cancelled ? 'green' : 'red'}
+                                content={
+                                    event.cancelled
+                                        ? 'Activate event'
+                                        : 'Cancel event'
+                                }
+                            />
                         </Form>
                     </Segment>
                 </Grid.Column>

@@ -35,8 +35,24 @@ export const createEvent = event => {
     };
 };
 
-export const updateEvent = event => {
+export const cancelEvent = (cancelled, eventID) => async (
+    dispatch,
+    getState,
+    { getFirestore }
+) => {
+    const firestore = getFirestore();
+    const message = cancelled ? 'Are you sure you want to cancel event': 'This will activate the event - Are you sure?';
+    try {
+        toastr.confirm(message,{
+            onOk: () => firestore.update(`events/${eventID}`, {
+                cancelled: cancelled
+            })});
+    } catch (error) {
+        toastr.error('Oops', error.message);
+    }
+};
 
+export const updateEvent = event => {
     return async (dispatch, getState, { getFirestore }) => {
         const firestore = getFirestore();
         if (event.date !== getState().firestore.ordered.events[0].date) {
