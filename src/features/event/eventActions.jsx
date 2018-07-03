@@ -41,12 +41,16 @@ export const cancelEvent = (cancelled, eventID) => async (
     { getFirestore }
 ) => {
     const firestore = getFirestore();
-    const message = cancelled ? 'Are you sure you want to cancel event': 'This will activate the event - Are you sure?';
+    const message = cancelled
+        ? 'Are you sure you want to cancel event'
+        : 'This will activate the event - Are you sure?';
     try {
-        toastr.confirm(message,{
-            onOk: () => firestore.update(`events/${eventID}`, {
-                cancelled: cancelled
-            })});
+        toastr.confirm(message, {
+            onOk: () =>
+                firestore.update(`events/${eventID}`, {
+                    cancelled: cancelled
+                })
+        });
     } catch (error) {
         toastr.error('Oops', error.message);
     }
@@ -96,4 +100,62 @@ export const loadEvents = () => {
             dispatch(asyncActionError());
         }
     };
+};
+
+export const goingEvent = event => async (
+    dispatch,
+    getState,
+    { getFirestore }
+) => {
+    const firestore = getFirestore();
+    const user = firestore.auth().currentUser;
+    const photoURL = getState().firebase.profile.photoURL;
+    const attendee = {
+        displayName: user.displayName,
+        going: true,
+        host: false,
+        photoURL: photoURL,
+        joinDate: Date.now()
+    };
+
+    try {
+        await firestore.update(`events/${event.id}`, {
+            // adding new object in to a existing obj
+            [`attendees.${user.uid}`]: attendee
+        });
+
+        await firestore.set(`event_attendee/${event.id}_${user.uid}`, {
+            eventDate: event.date,
+            eventId: event.id,
+            host: false,
+            userUid: user.uid
+        });
+
+        toastr.success('Success', 'You are going to this event');
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+export const cancelGoingEvent = event => async (
+    dispatch,
+    getState,
+    { getFirestore }
+) => {
+    const firestore = getFirestore();
+    const user = firestore.auth().currentUser;
+
+    try {
+        // Delete fields
+        await firestore.update(`events/${event.id}`, {
+            [`attendees.${user.uid}`]: firestore.FieldValue.delete()
+        });
+
+        // Remove document
+        await firestore.delete(`event_attendee/${event.id}_${user.uid}`);
+
+        toastr.success('Success', 'You have removed yourself from the event');
+    } catch (error) {
+        console.log(error.message);
+    }
 };

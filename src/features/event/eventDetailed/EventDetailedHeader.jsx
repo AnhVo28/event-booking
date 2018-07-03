@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Segment, Image, Item, Header, Button } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import format from 'date-fns/format';
@@ -16,7 +16,13 @@ const eventImageTextStyle = {
     color: 'white'
 };
 
-const EventDetailedHeader = ({ event }) => {
+const EventDetailedHeader = ({
+    event,
+    isHost,
+    isGoing,
+    goingEvent,
+    cancelGoingEvent
+}) => {
     let eventDate;
     if (event.date) {
         eventDate = event.date.toDate();
@@ -51,17 +57,26 @@ const EventDetailedHeader = ({ event }) => {
             </Segment>
 
             <Segment attached="bottom">
-                <Button>Cancel My Place</Button>
-                <Button color="teal">JOIN THIS EVENT</Button>
+                {!isHost && (
+                    <Fragment>
+                        {isGoing ? (
+                            <Button onClick={() => cancelGoingEvent(event)}>Cancel My Place</Button>
+                        ) : (
+                            <Button
+                                onClick={() => goingEvent(event)}
+                                color="teal"
+                            >
+                                JOIN THIS EVENT{' '}
+                            </Button>
+                        )}
+                    </Fragment>
+                )}
 
-                <Button
-                    as={Link}
-                    to={`/manage/${event.id}`}
-                    color="orange"
-                    floated="right"
-                >
-                    Manage Event
-                </Button>
+                {isHost && (
+                    <Button as={Link} to={`/manage/${event.id}`} color="orange">
+                        Manage Event
+                    </Button>
+                )}
             </Segment>
         </Segment.Group>
     );

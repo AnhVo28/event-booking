@@ -8,6 +8,7 @@ import EventDetailedInfo from './EventDetailedInfo';
 import EventDetailedChat from './EventDetailedChat';
 import EventDetailedSidebar from './EventDetailedSidebar';
 import { objectToArray } from '../../../app/common/util/helper';
+import { goingEvent, cancelGoingEvent } from '../eventActions';
 
 const mapState = state => {
     let event = {};
@@ -19,44 +20,62 @@ const mapState = state => {
 
     // Return the Obj since currently in MapToProps
     return {
-        event
+        event,
+        auth: state.firebase.auth
     };
 };
 
-export class EventDetailedPage extends Component {
+const actions = {
+    goingEvent,
+    cancelGoingEvent
+};
 
-    // Get the event from firestore 
+export class EventDetailedPage extends Component {
+    // Get the event from firestore
     async componentDidMount() {
         const { firestore, match, history } = this.props;
-        let event = await firestore.get(`events/${match.params.id}`);
-        if (!event.exists) {
-            history.push('/events');
-            toastr.error('Sorry', 'Event not found');
-        }
+        await firestore.setListener(`events/${match.params.id}`);
+        // if (!event.exists) {
+        //     history.push('/events');
+        //     toastr.error('Sorry', 'Event not found');
+        // }
+    }
+    async componentWillUnmount() {
+        const { firestore, match } = this.props;
+        await firestore.unsetListener(`events/${match.params.id}`);
     }
 
     render() {
-        const { event } = this.props;
+        const { event, auth, goingEvent, cancelGoingEvent } = this.props;
         const attendees =
             event && event.attendees && objectToArray(event.attendees);
+        const isHost = event.hostUid === auth.uid;
+        const isGoing = attendees && attendees.some(e => e.id === auth.uid);
 
         return (
             <Grid>
-               
-               
                 <Grid.Column width={10}>
-                    <EventDetailedHeader event={event} />
+                    <EventDetailedHeader
+                        goingEvent={goingEvent}
+                        event={event}
+                        isHost={isHost}
+                        isGoing={isGoing}
+                        cancelGoingEvent={cancelGoingEvent}
+                    />
                     <EventDetailedInfo event={event} />
                     <EventDetailedChat />
                 </Grid.Column>
                 <Grid.Column width={6}>
                     <EventDetailedSidebar attendees={attendees} />
                 </Grid.Column>
-                 
-            
             </Grid>
         );
     }
 }
 
-export default withFirestore(connect(mapState)(EventDetailedPage));
+export default withFirestore(
+    connect(
+        mapState,
+        actions
+    )(EventDetailedPage)
+);
