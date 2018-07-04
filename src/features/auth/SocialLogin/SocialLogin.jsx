@@ -2,7 +2,6 @@ import React from 'react';
 import { Button, Icon } from 'semantic-ui-react';
 
 const SocialLogin = ({ socialLogin }) => {
-    console.log('socialLogin: ', socialLogin);
 
     return (
         <div>

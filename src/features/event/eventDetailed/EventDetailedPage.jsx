@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Grid } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { withFirestore } from 'react-redux-firebase';
-import { toastr } from 'react-redux-toastr';
+// import { toastr } from 'react-redux-toastr';
 import EventDetailedHeader from './EventDetailedHeader';
 import EventDetailedInfo from './EventDetailedInfo';
 import EventDetailedChat from './EventDetailedChat';
@@ -33,7 +33,7 @@ const actions = {
 export class EventDetailedPage extends Component {
     // Get the event from firestore
     async componentDidMount() {
-        const { firestore, match, history } = this.props;
+        const { firestore, match } = this.props;
         await firestore.setListener(`events/${match.params.id}`);
         // if (!event.exists) {
         //     history.push('/events');

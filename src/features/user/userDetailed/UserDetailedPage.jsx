@@ -12,34 +12,36 @@ import {
     Menu,
     Segment
 } from 'semantic-ui-react';
-import { firestoreConnect } from 'react-redux-firebase';
+import { firestoreConnect, isEmpty } from 'react-redux-firebase';
 import { connect } from 'react-redux';
 import differenceInYears from 'date-fns/difference_in_years';
 import format from 'date-fns/format';
+import { userDetailedQuery } from '../userQueries';
 
-const mapState = state => ({
-    profile: state.firebase.profile,
-    auth: state.firebase.auth,
-    photos: state.firestore.ordered.photos
-});
+const mapState = (state, ownProps) => {
+    let userUid = null;
+    let profile = {};
 
-// Query in our firebase
-const query = ({ auth }) => {
-    return [
-        {
-            collection: 'users',
-            doc: auth.uid,
-            subcollections: [{ collection: 'photos' }],
-            // Save as photos props in redux firestore.ordered
-            storeAs: 'photos'
-        }
-    ];
+    if (ownProps.match.params.id === state.auth.id) {
+        profile = state.firebase.profile;
+    } else {
+        profile =
+            !isEmpty(state.firestore.ordered.profile) &&
+            state.firestore.ordered.profile[0];
+        userUid = ownProps.match.params.id;
+    }
+
+    return {
+        profile,
+        userUid,
+        auth: state.firebase.auth,
+        photos: state.firestore.ordered.photos
+    };
 };
 
 class UserDetailedPage extends Component {
     render() {
         const { profile, photos } = this.props;
-
         // format createdAt date
         let createdAt;
         if (profile.createdAt) {
@@ -205,5 +207,7 @@ class UserDetailedPage extends Component {
 }
 
 export default connect(mapState)(
-    firestoreConnect(auth => query(auth))(UserDetailedPage)
+    firestoreConnect((auth, userUid) => userDetailedQuery(auth, userUid))(
+        UserDetailedPage
+    )
 );
