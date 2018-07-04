@@ -114,7 +114,7 @@ export const goingEvent = event => async (
         displayName: user.displayName,
         going: true,
         host: false,
-        photoURL: photoURL,
+        photoURL: photoURL || '/assets/user.png',
         joinDate: Date.now()
     };
 
