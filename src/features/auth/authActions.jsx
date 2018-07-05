@@ -43,7 +43,8 @@ export const registerUser = user => async (
         // Create the new profile
         let newUser = {
             displayName: user.displayName,
-            createdAt: firestore.FieldValue.serverTimestamp()
+            createdAt: firestore.FieldValue.serverTimestamp(),
+            photoURL: '/assets/user.png'
         };
 
         await firestore.set(`users/${createdUser.uid}`, { ...newUser });
@@ -74,7 +75,8 @@ export const socialLogin = selectedProvider => {
                     photoURL: user.profile.avatarUrl,
                     createdAt: firestore.FieldValue.serverTimestamp()
                 });
-            }
+            } 
+
         } catch (error) {
             console.log(error);
         }

@@ -19,6 +19,7 @@ import format from 'date-fns/format';
 import { userDetailedQuery } from '../userQueries';
 import LazyLoad from 'react-lazyload';
 import LoadingComp from '../../../app/layout/LoadingComp';
+import moment from 'moment';
 
 const mapState = (state, ownProps) => {
     let userUid = null;
@@ -45,18 +46,24 @@ const mapState = (state, ownProps) => {
 class UserDetailedPage extends Component {
     render() {
         const { profile, photos, auth, match, requesting } = this.props;
-        const isCurrentUser = auth.id === match.params.id;
+        const isCurrentUser = auth.uid === match.params.id;
 
-        const loading = Object.values(requesting).some(a=> a === true);
+        const loading = Object.values(requesting).some(a => a === true);
 
         if (loading) {
-            return <LoadingComp inverted={true}/>;
+            return <LoadingComp inverted={true} />;
         }
 
         // format createdAt date
         let createdAt;
         if (profile.createdAt) {
-            createdAt = format(profile.createdAt.toDate(), 'D MMM YYYY');
+            if (typeof profile.createdAt === 'string') {
+                createdAt = moment(parseInt(profile.createdAt, 10)).format(
+                    'D MMM YYYY'
+                );
+            } else {
+                createdAt = format(profile.createdAt.toDate(), 'D MMM YYYY');
+            }
         }
 
         // count years

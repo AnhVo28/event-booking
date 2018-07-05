@@ -22,7 +22,7 @@ const DateInput = ({
                 selected={value ? moment(value) : null}
                 onChange={onChange}
                 {...restInput}
-                onBlur={()=>onBlur()}
+                onBlur={() => onBlur()}
             />
             {touched &&
                 error && (
