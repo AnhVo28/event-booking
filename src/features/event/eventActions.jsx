@@ -153,16 +153,42 @@ export const cancelGoingEvent = event => async (
     }
 };
 
-export const getEventsForDashboard = () => async (dispatch, getState) => {
+export const getEventsForDashboard = lastEvent => async (
+    dispatch,
+    getState
+) => {
     let today = new Date(Date.now());
     const firestore = firebase.firestore();
-    const eventQuery = firestore
-        .collection('events')
-        .where('date', '>=', today);
+    const eventRef = firestore.collection('events');
 
     try {
         dispatch(asyncActionStart());
-        let eventQuerySnap = await eventQuery.get();
+        let startAfter =
+            lastEvent &&
+            (await firestore
+                .collection('events')
+                .doc(lastEvent.id)
+                .get());
+        let query;
+
+        lastEvent
+            ? (query = eventRef
+                // .where('date', '>=', today)
+                .orderBy('date')
+                .startAfter(startAfter)
+                .limit(2))
+            : query= eventRef
+            // .where('date', '>=', today)
+                .orderBy('date')
+                .limit(2);
+
+        let eventQuerySnap = await query.get();
+        console.log('eventQuerySnap: ', eventQuerySnap);
+
+        if (eventQuerySnap.docs.length === 0) {
+            dispatch(asyncActionFinish());
+            return eventQuerySnap;
+        }
 
         let events = [];
         for (let i = 0; i < eventQuerySnap.docs.length; i++) {
@@ -178,8 +204,9 @@ export const getEventsForDashboard = () => async (dispatch, getState) => {
             payload: { events }
         });
         dispatch(asyncActionFinish());
+        return eventQuerySnap;
     } catch (error) {
         dispatch(asyncActionError());
-        console.log(error.message);
+        console.log('loi: ', error.message);
     }
 };

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Grid } from 'semantic-ui-react';
+import { Grid, Loader } from 'semantic-ui-react';
 import EventList from '../eventList/EventList';
 import { connect } from 'react-redux';
-import { firestoreConnect, isEmpty, isLoaded } from 'react-redux-firebase';
+import { firestoreConnect } from 'react-redux-firebase';
 import { getEventsForDashboard } from '../eventActions';
 import LoadingComp from '../../../app/layout/LoadingComp';
 import EventActivity from '../eventActivity/EventActivity';
@@ -17,29 +17,66 @@ const mapStateToProps = state => ({
 });
 
 class EventDashboard extends Component {
-    handleDeleteEvent = eventId => () => {
-        this.props.deleteEvent(eventId);
+    state = {
+        moreEvent: false,
+        loadingInitial: true,
+        loadedEvents: []
     };
 
     async componentDidMount() {
-        await this.props.getEventsForDashboard();
+        let next = await this.props.getEventsForDashboard();
+
+        console.log(next);
+
+        if (next && next.docs && next.docs.length > 1) {
+            this.setState({
+                moreEvent: true,
+                loadingInitial: false
+            });
+        }
     }
 
-    render() {
-        const { events , loading } = this.props;
-        console.log('events: ', events);
+    getNextEvents = async () => {
+        const { events } = this.props;
+        let lastEvent = events && events[events.length - 1];
+        console.log('lastEvent: ', lastEvent);
+        let next = await this.props.getEventsForDashboard(lastEvent);
+        console.log('next: ', next);
 
-        if (loading) return <LoadingComp inverted={true} />;
+        if (next && next.docs && next.docs.length <= 1) {
+            this.setState({
+                moreEvent: false
+            });
+        }
+    };
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.events !== nextProps.events) {
+            this.setState({
+                loadedEvents: [...this.state.loadedEvents, ...nextProps.events]
+            });
+        }
+    }
+    render() {
+        const { loadedEvents, moreEvent } = this.state;
+        const { loading } = this.props;
+
+        if (this.state.loadingInitial) return <LoadingComp inverted={true} />;
         return (
             <Grid>
                 <Grid.Column width={10}>
                     <EventList
-                        handleDeleteEvent={this.handleDeleteEvent}
-                        events={events}
+                        events={loadedEvents}
+                        moreEvent={moreEvent}
+                        loading={loading}
+                        getNextEvents={this.getNextEvents}
                     />
                 </Grid.Column>
                 <Grid.Column width={6}>
                     <EventActivity />
+                </Grid.Column>
+                <Grid.Column width={10}>
+                    <Loader active={loading} />
                 </Grid.Column>
             </Grid>
         );
