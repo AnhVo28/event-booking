@@ -1,9 +1,9 @@
 # Job Application with translation feature
 
-Job Application with React, Redux, Redux-form, SASS, Flow and Globalization.
+Social Web app for connecting people via events built by React, Redux and Firebase
 
 
-[Demo verson. Click here!](https://anhvo-job-app.surge.sh/)
+[Demo verson. Click here!](https://reevent-207107.firebaseapp.com/)
 
 
 ## Quick Overview.
@@ -17,7 +17,7 @@ npm start
 
 Then open [http://localhost:3000/](http://localhost:3000/) to see your app.<br>
 
-<img src='https://i.imgur.com/xvORuYI.png' width='600' alt='npm start'>
+![Alt Text](https://media.giphy.com/media/3izafK3cFzUh68JArq/giphy.gif)
 
 ## Folder Structure
 
@@ -113,6 +113,6 @@ It automatically deploys the app and show it in the browser as [http://localhost
 
 ## Authors
 
-* **Anh Hoang Vo** - *Initial work* - [Sign Up Form](https://github.com/HoangAnhVo/job-application-react)
+* **Anh Hoang Vo** - *Initial work* - [Sign Up Form](https://github.com/anhvo28/job-application-react)
 
-See also the list of [contributors](https://github.com/HoangAnhVo/job-application-react/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/anhvo28/job-application-react/contributors) who participated in this project.
