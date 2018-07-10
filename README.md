@@ -17,7 +17,7 @@ npm start
 
 Then open [http://localhost:3000/](http://localhost:3000/) to see your app.<br>
 
-<img src="https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif" width='600' alt='npm start' />
+<img src="https://media.giphy.com/media/3izafK3cFzUh68JArq/giphy.gif" width='600' alt='npm start' />
 
 ## Folder Structure
 
