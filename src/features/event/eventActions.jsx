@@ -183,7 +183,6 @@ export const getEventsForDashboard = lastEvent => async (
                 .limit(2);
 
         let eventQuerySnap = await query.get();
-        console.log('eventQuerySnap: ', eventQuerySnap);
 
         if (eventQuerySnap.docs.length === 0) {
             dispatch(asyncActionFinish());

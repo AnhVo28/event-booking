@@ -11,6 +11,7 @@ import PeopleDashboard from '../../features/user/PeopleDashboard/PeopleDashboard
 import HomePage from '../../features/home/HomePage';
 import TestComponent from '../../features/testArea/TestComponent';
 import ModalMananger from '../../features/modals/ModalMananger';
+// import LoadingComp from '../layout/LoadingComp';
 
 class App extends Component {
     render() {
@@ -19,7 +20,7 @@ class App extends Component {
                 <Switch>
                     <Route exact path="/" component={HomePage} />
                 </Switch>
-                <ModalMananger/>
+                <ModalMananger />
                 <Route
                     path="/(.+)"
                     render={() => (
@@ -59,7 +60,6 @@ class App extends Component {
                                         path="/createEvent"
                                         component={EventForm}
                                     />
-                                    
                                 </Switch>
                             </Container>
                         </div>

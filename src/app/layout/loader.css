@@ -41,25 +41,25 @@
 
 @keyframes dot-3-move {
   20% {transform: scale(1)}
-  45% {transform: translateY(-18px) scale(.45)}
-  60% {transform: translateY(-90px) scale(.45)}
-  80% {transform: translateY(-90px) scale(.45)}
+  45% {transform: translateY(-9px) scale(.45)}
+  60% {transform: translateY(-45px) scale(.45)}
+  80% {transform: translateY(-45px) scale(.45)}
   100% {transform: translateY(0px) scale(1)}
 }
 
 @keyframes dot-2-move {
   20% {transform: scale(1)}
-  45% {transform: translate(-16px, 12px) scale(.45)}
-  60% {transform: translate(-80px, 60px) scale(.45)}
-  80% {transform: translate(-80px, 60px) scale(.45)}
+  45% {transform: translate(-8px, 6px) scale(.45)}
+  60% {transform: translate(-40px, 30px) scale(.45)}
+  80% {transform: translate(-40px, 30px) scale(.45)}
   100% {transform: translateY(0px) scale(1)}
 }
 
 @keyframes dot-1-move {
   20% {transform: scale(1)}
-  45% {transform: translate(16px, 12px) scale(.45)}
-  60% {transform: translate(80px, 60px) scale(.45)}
-  80% {transform: translate(80px, 60px) scale(.45)}
+  45% {transform: translate(8px, 6px) scale(.45)}
+  60% {transform: translate(40px, 30px) scale(.45)}
+  80% {transform: translate(40px, 30px) scale(.45)}
   100% {transform: translateY(0px) scale(1)}
 }
 
