@@ -9,8 +9,8 @@ import {
     Image,
     Item,
     List,
-    Menu,
-    Segment
+    Segment,
+    Tab
 } from 'semantic-ui-react';
 import { firestoreConnect, isEmpty } from 'react-redux-firebase';
 import { connect } from 'react-redux';
@@ -20,7 +20,11 @@ import { userDetailedQuery } from '../userQueries';
 import LazyLoad from 'react-lazyload';
 import LoadingComp from '../../../app/layout/LoadingComp';
 import moment from 'moment';
+import { getUserEvent } from '../userActions';
 
+const actions = {
+    getUserEvent
+};
 const mapState = (state, ownProps) => {
     let userUid = null;
     let profile = {};
@@ -37,15 +41,35 @@ const mapState = (state, ownProps) => {
     return {
         profile,
         userUid,
+        events:state.events,
+        eventLoading: state.async.loading,
         auth: state.firebase.auth,
         photos: state.firestore.ordered.photos,
         requesting: state.firestore.status.requesting
     };
 };
 
+const panes  = [
+    { menuItem: 'All Events', pane: {key:'allEvents'}},
+    { menuItem: 'Past Events', pane: {key:'pastEvents'}},
+    { menuItem: 'Future Events', pane: {key:'futureEvents'}},
+    { menuItem: 'Hosting', pane: {key:'hostedEvents'}},
+];
+
 class UserDetailedPage extends Component {
+    async componentDidMount() {
+        await this.props.getUserEvent(this.props.userUid);
+        
+    }
+
+    changeTab = (e, data)=>{
+        this.props.getUserEvent(this.props.userUid, data.activeIndex);
+        
+        
+    }
+
     render() {
-        const { profile, photos, auth, match, requesting } = this.props;
+        const { profile, photos, auth, match, requesting, events, eventLoading } = this.props;
         const isCurrentUser = auth.uid === match.params.id;
 
         const loading = Object.values(requesting).some(a => a === true);
@@ -196,43 +220,32 @@ class UserDetailedPage extends Component {
                 </Grid.Column>
 
                 <Grid.Column width={12}>
-                    <Segment attached>
+                    <Segment attached loading={eventLoading}>
                         <Header icon="calendar" content="Events" />
-                        <Menu secondary pointing>
-                            <Menu.Item name="All Events" active />
-                            <Menu.Item name="Past Events" />
-                            <Menu.Item name="Future Events" />
-                            <Menu.Item name="Events Hosted" />
-                        </Menu>
+                        <Tab onTabChange={(e, data)=>this.changeTab(e,data)} panes={panes} menu={{secondary: true, poiting: 'true'}}/>
+                        <br/>
 
                         <Card.Group itemsPerRow={5}>
-                            <Card>
-                                <Image
-                                    src={'/assets/categoryImages/drinks.jpg'}
-                                />
-                                <Card.Content>
-                                    <Card.Header textAlign="center">
-                                        Event Title
-                                    </Card.Header>
-                                    <Card.Meta textAlign="center">
-                                        28th March 2018 at 10:00 PM
-                                    </Card.Meta>
-                                </Card.Content>
-                            </Card>
+                            {events && events.map(event=>(
+                                <Card as={Link} to={`/event/${event.id}`} key={event.id}>
+                                    <Image
+                                        src={`/assets/categoryImages/${event.category}.jpg`}
+                                    />
+                                    <Card.Content>
+                                        <Card.Header textAlign="center">
+                                            {event.title}
+                                        </Card.Header>
+                                        <Card.Meta textAlign="center">
+                                            <div>{format(event.date && event.date.toDate(), 'DD MMMM YYYY')}</div>
+                                            <div>{format(event.date && event.date.toDate(), 'h:mm A')}</div>
+                                        </Card.Meta>
+                                    </Card.Content>
+                                </Card>
 
-                            <Card>
-                                <Image
-                                    src={'/assets/categoryImages/drinks.jpg'}
-                                />
-                                <Card.Content>
-                                    <Card.Header textAlign="center">
-                                        Event Title
-                                    </Card.Header>
-                                    <Card.Meta textAlign="center">
-                                        28th March 2018 at 10:00 PM
-                                    </Card.Meta>
-                                </Card.Content>
-                            </Card>
+                            ))}
+                            
+
+                            
                         </Card.Group>
                     </Segment>
                 </Grid.Column>
@@ -241,7 +254,10 @@ class UserDetailedPage extends Component {
     }
 }
 
-export default connect(mapState)(
+export default connect(
+    mapState,
+    actions
+)(
     firestoreConnect((auth, userUid) => userDetailedQuery(auth, userUid))(
         UserDetailedPage
     )
