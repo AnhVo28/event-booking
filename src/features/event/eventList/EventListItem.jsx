@@ -8,10 +8,6 @@ import { objectToArray } from '../../../app/common/util/helper';
 class EventListItem extends Component {
     render() {
         const { event } = this.props;
-
-        console.log('====================================');
-        console.log('event.date:', event.date);
-        console.log('====================================');
         return (
             <Segment.Group>
                 <Segment>

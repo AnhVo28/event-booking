@@ -3,11 +3,20 @@ import { Field, reduxForm } from 'redux-form';
 import { Form, Button } from 'semantic-ui-react';
 import Textarea from '../../../app/common/form/TextArea';
 
-class eventDetailedChatForm extends React.Component{
+class eventDetailedChatForm extends React.Component {
     handleCommitSubmit = values => {
-        const { addEventComment, reset, eventId } = this.props;
-        addEventComment(eventId, values);
+        const {
+            addEventComment,
+            reset,
+            eventId,
+            handleCloseReplyForm,
+            parentId
+        } = this.props;
+        addEventComment(eventId, values, parentId);
         reset();
+        if (parentId !== 0) {
+            handleCloseReplyForm();
+        }
     };
 
     render() {
@@ -17,7 +26,7 @@ class eventDetailedChatForm extends React.Component{
                     name="comment"
                     type="text"
                     component={Textarea}
-                    row={2}
+                    rows={2}
                 />
                 <Button
                     content="Add Reply"
@@ -30,4 +39,4 @@ class eventDetailedChatForm extends React.Component{
     }
 }
 
-export default reduxForm({ form: 'eventChat' })(eventDetailedChatForm);
+export default reduxForm({ Field: 'comment' })(eventDetailedChatForm);
