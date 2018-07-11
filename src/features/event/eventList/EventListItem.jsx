@@ -8,6 +8,10 @@ import { objectToArray } from '../../../app/common/util/helper';
 class EventListItem extends Component {
     render() {
         const { event } = this.props;
+
+        console.log('====================================');
+        console.log('event.date:', event.date);
+        console.log('====================================');
         return (
             <Segment.Group>
                 <Segment>
@@ -19,12 +23,26 @@ class EventListItem extends Component {
                                 src={event.hostPhotoURL}
                             />
                             <Item.Content>
-                                <Item.Header as={Link} to={`/event/${event.id}`}>{event.title}</Item.Header>
+                                <Item.Header
+                                    as={Link}
+                                    to={`/event/${event.id}`}
+                                >
+                                    {event.title}
+                                </Item.Header>
                                 <Item.Description>
-                                    Hosted by <Link to={`/profile/${event.hostUid}`}>{event.hostedBy}</Link>
+                                    Hosted by{' '}
+                                    <Link to={`/profile/${event.hostUid}`}>
+                                        {event.hostedBy}
+                                    </Link>
                                 </Item.Description>
-                                {event.cancelled && 
-                                <Label style={{top: '-40px'}} ribbon='right' color="red" content="This event has been cancelled"></Label>}
+                                {event.cancelled && (
+                                    <Label
+                                        style={{ top: '-40px' }}
+                                        ribbon="right"
+                                        color="red"
+                                        content="This event has been cancelled"
+                                    />
+                                )}
                             </Item.Content>
                         </Item>
                     </Item.Group>
@@ -40,14 +58,12 @@ class EventListItem extends Component {
                 <Segment secondary>
                     <List horizontal>
                         {event.attendees &&
-                            objectToArray(event.attendees).map(
-                                (attendee) => (
-                                    <EventListAttendee
-                                        key={attendee.id}
-                                        attendee={attendee}
-                                    />
-                                )
-                            )}
+                            objectToArray(event.attendees).map(attendee => (
+                                <EventListAttendee
+                                    key={attendee.id}
+                                    attendee={attendee}
+                                />
+                            ))}
                     </List>
                 </Segment>
                 <Segment clearing>
